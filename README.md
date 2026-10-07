@@ -4,6 +4,7 @@ Build and publish the PKGBUILDs in your projects to the AUR without leaving VS C
 
 ## Key Features
 
+- **PKGBUILD generator**: No PKGBUILD yet? Fill out a form and get one. The name, version, description, URL, license, maintainer and build system are read from your project, and a live preview shows the result as you type.
 - **Automatic detection**: Every `PKGBUILD` in the workspace shows up in the pkgpub sidebar, with its local version, the version on the AUR and whether you can push to it.
 - **Clean builds**: Builds run on a copy in `~/.pkgpub/build/<pkgbase>/`. Downloads, `src/`, `pkg/` and the built packages all live there, and your project stays exactly as it was.
 - **Build & Install**: One click runs `makepkg -si` in a terminal, so you can test the package on your own machine first.
@@ -21,6 +22,19 @@ Build and publish the PKGBUILDs in your projects to the AUR without leaving VS C
 3. Open a project with a PKGBUILD and hit **Publish** in the sidebar or at the top of the file.
 
 pkgpub needs `makepkg` and `updpkgsums` (both part of `pacman`), `git` and `ssh`, so it's meant for Arch Linux and its friends.
+
+## Creating a PKGBUILD
+
+Click **Create PKGBUILD** in the empty pkgpub sidebar or its title bar, or right-click a folder in the Explorer. The form is filled in from what the project already says about itself:
+
+- **Manifests**: `package.json`, `deno.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, `pubspec.yaml` and `ipm-package.yaml` give the name, version, description, URL, license and command name.
+- **License file**: `LICENSE` or `COPYING` gives the SPDX identifier, and pkgpub offers to install the file.
+- **Git**: the remote gives the repository, your git config gives the maintainer, and the latest tag gives the version.
+- **GitHub**: the repository's description and license fill any gaps.
+
+Each auto-filled field says where its value came from. Change whatever you like, and clear a field to get the detected value back.
+
+Choose between a **release tarball** and a **`-git` package** that builds the latest commit. For `-git` packages, pkgpub writes a `pkgver()` for you. The build steps come from presets for npm, pnpm, yarn, Bun, Deno, Go, Rust, Python, Dart, Make, CMake and Meson. They follow the Arch packaging guidelines, and anything pkgpub can't know is marked with a `TODO` comment. After creating the file, pkgpub remembers the version source, so publishing later offers the new version.
 
 ## Publishing, step by step
 
@@ -66,6 +80,20 @@ Per-project choices are stored at the root of the workspace folder, so you can c
 - Package metadata comes from `makepkg --printsrcinfo`, which sources the PKGBUILD. That's why pkgpub stays disabled in untrusted workspaces.
 - Access is checked with `ssh aur@aur.archlinux.org list-repos`. For packages you don't own, pkgpub starts `git-receive-pack` and closes it right away. The AUR checks permissions before anything can be pushed.
 - The AUR checkout is managed by pkgpub: every publish resets it to the AUR's `master`, so don't keep your own work in it.
+
+## Building and installing locally
+
+You'll need Node.js 22 (see `.nvmrc`) and npm.
+
+```sh
+npm install
+npm run package                               # compiles and builds pkgpub-<version>.vsix
+code --install-extension pkgpub-0.1.0.vsix    # use the version that was just built
+```
+
+Reload VS Code afterwards, with **Developer: Reload Window** or by restarting it. You can also install the `.vsix` from the Extensions view: open the `...` menu and choose **Install from VSIX...**.
+
+To update, bump `version` in `package.json`, then package and install again. The new version replaces the old one. To remove it, run `code --uninstall-extension ionnet.pkgpub`.
 
 ## Development
 

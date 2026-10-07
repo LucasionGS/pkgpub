@@ -3,7 +3,7 @@
   "displayName": "pkgpub - PKGBUILD Publisher",
   "description": "Detects PKGBUILDs in your project, builds them without cluttering it and publishes them to the AUR.",
   "version": "0.1.0",
-  "publisher": "lucasion",
+  "publisher": "ionnet",
   "author": "Lucasion",
   "engines": {
     "vscode": "^1.95.0"
@@ -78,10 +78,16 @@
     "viewsWelcome": [
       {
         "view": "pkgpub.packages",
-        "contents": "No PKGBUILD files were found in this workspace.\n[Refresh](command:pkgpub.refresh)"
+        "contents": "No PKGBUILD files were found in this workspace.\n[Create PKGBUILD](command:pkgpub.createPkgbuild)\nThe form is filled in from your project's manifests, license and git repository.\n[Refresh](command:pkgpub.refresh)"
       }
     ],
     "commands": [
+      {
+        "command": "pkgpub.createPkgbuild",
+        "title": "Create PKGBUILD",
+        "category": "pkgpub",
+        "icon": "$(new-file)"
+      },
       {
         "command": "pkgpub.refresh",
         "title": "Refresh",
@@ -170,6 +176,11 @@
     "menus": {
       "view/title": [
         {
+          "command": "pkgpub.createPkgbuild",
+          "when": "view == pkgpub.packages",
+          "group": "navigation@0"
+        },
+        {
           "command": "pkgpub.refresh",
           "when": "view == pkgpub.packages",
           "group": "navigation@1"
@@ -245,6 +256,13 @@
           "command": "pkgpub.openAurCheckout",
           "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
           "group": "4_open@4"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "pkgpub.createPkgbuild",
+          "when": "explorerResourceIsFolder",
+          "group": "7_modification@9"
         }
       ],
       "editor/title": [

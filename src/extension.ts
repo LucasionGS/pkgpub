@@ -8,6 +8,7 @@ import Log from "./Log";
 import PackageRegistry, { PackageState } from "./PackageRegistry";
 import { run } from "./Utilities";
 import AurDiffProvider from "./views/AurDiffProvider";
+import CreatePkgbuildPanel from "./views/CreatePkgbuildPanel";
 import PackageTree from "./views/PackageTree";
 import PkgbuildCodeLens from "./views/PkgbuildCodeLens";
 import { aurPage } from "./views/presentation";
@@ -58,6 +59,9 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("pkgpub.refresh", command(() => registry.refresh())),
     vscode.commands.registerCommand("pkgpub.selectSshKey", command(() => selectSshKey(registry))),
+    vscode.commands.registerCommand("pkgpub.createPkgbuild", command((folder?: vscode.Uri) => {
+      return CreatePkgbuildPanel.show(context.extensionUri, registry, folder instanceof vscode.Uri ? folder : undefined);
+    })),
   );
 
   const makepkg = await run("makepkg", ["--version"], { quiet: true }).catch(() => null);
