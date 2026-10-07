@@ -1,0 +1,335 @@
+{
+  "name": "pkgpub",
+  "displayName": "pkgpub - PKGBUILD Publisher",
+  "description": "Detects PKGBUILDs in your project, builds them without cluttering it and publishes them to the AUR.",
+  "version": "0.1.0",
+  "publisher": "lucasion",
+  "author": "Lucasion",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "arch",
+    "aur",
+    "pkgbuild",
+    "makepkg",
+    "pacman"
+  ],
+  "main": "./dist/extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "pkgpub runs makepkg, which executes the PKGBUILD's code."
+    }
+  },
+  "activationEvents": [
+    "workspaceContains:**/PKGBUILD"
+  ],
+  "contributes": {
+    "taskDefinitions": [
+      {
+        "type": "pkgpub",
+        "required": [
+          "pkgbase"
+        ],
+        "properties": {
+          "pkgbase": {
+            "type": "string",
+            "description": "The package base to build."
+          }
+        }
+      }
+    ],
+    "languages": [
+      {
+        "id": "shellscript",
+        "filenames": [
+          "PKGBUILD"
+        ]
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": "**/.pkgpub/config.json",
+        "url": "./schemas/config.schema.json"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pkgpub",
+          "title": "PKGBUILD Publisher",
+          "icon": "media/pkgpub.svg"
+        }
+      ]
+    },
+    "views": {
+      "pkgpub": [
+        {
+          "id": "pkgpub.packages",
+          "name": "Packages",
+          "icon": "media/pkgpub.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "pkgpub.packages",
+        "contents": "No PKGBUILD files were found in this workspace.\n[Refresh](command:pkgpub.refresh)"
+      }
+    ],
+    "commands": [
+      {
+        "command": "pkgpub.refresh",
+        "title": "Refresh",
+        "category": "pkgpub",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "pkgpub.build",
+        "title": "Build Package",
+        "category": "pkgpub",
+        "icon": "$(tools)"
+      },
+      {
+        "command": "pkgpub.buildInstall",
+        "title": "Build and Install Package",
+        "category": "pkgpub",
+        "icon": "$(desktop-download)"
+      },
+      {
+        "command": "pkgpub.publish",
+        "title": "Publish to AUR",
+        "category": "pkgpub",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "pkgpub.setVersion",
+        "title": "Set Version",
+        "category": "pkgpub",
+        "icon": "$(tag)"
+      },
+      {
+        "command": "pkgpub.generatePkgver",
+        "title": "Generate pkgver() Function",
+        "category": "pkgpub",
+        "icon": "$(symbol-function)"
+      },
+      {
+        "command": "pkgpub.checkAccess",
+        "title": "Check AUR Access",
+        "category": "pkgpub",
+        "icon": "$(key)"
+      },
+      {
+        "command": "pkgpub.selectSshKey",
+        "title": "Select AUR SSH Key",
+        "category": "pkgpub",
+        "icon": "$(key)"
+      },
+      {
+        "command": "pkgpub.openAurPage",
+        "title": "Open on AUR",
+        "category": "pkgpub",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "pkgpub.openBuildFolder",
+        "title": "Open Build Folder",
+        "category": "pkgpub",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "pkgpub.openAurCheckout",
+        "title": "Open AUR Checkout Folder",
+        "category": "pkgpub",
+        "icon": "$(repo)"
+      },
+      {
+        "command": "pkgpub.clean",
+        "title": "Clean Build Folder",
+        "category": "pkgpub",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "pkgpub.actions",
+        "title": "Package Actions",
+        "category": "pkgpub",
+        "icon": "$(package)"
+      },
+      {
+        "command": "pkgpub.openPkgbuild",
+        "title": "Open PKGBUILD",
+        "category": "pkgpub",
+        "icon": "$(go-to-file)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "pkgpub.refresh",
+          "when": "view == pkgpub.packages",
+          "group": "navigation@1"
+        },
+        {
+          "command": "pkgpub.selectSshKey",
+          "when": "view == pkgpub.packages",
+          "group": "navigation@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "pkgpub.build",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "inline@1"
+        },
+        {
+          "command": "pkgpub.publish",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "inline@2"
+        },
+        {
+          "command": "pkgpub.build",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "1_build@1"
+        },
+        {
+          "command": "pkgpub.buildInstall",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "1_build@2"
+        },
+        {
+          "command": "pkgpub.clean",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "1_build@3"
+        },
+        {
+          "command": "pkgpub.publish",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "2_publish@1"
+        },
+        {
+          "command": "pkgpub.checkAccess",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "2_publish@2"
+        },
+        {
+          "command": "pkgpub.setVersion",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "3_version@1"
+        },
+        {
+          "command": "pkgpub.generatePkgver",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "3_version@2"
+        },
+        {
+          "command": "pkgpub.openPkgbuild",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "4_open@1"
+        },
+        {
+          "command": "pkgpub.openAurPage",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "4_open@2"
+        },
+        {
+          "command": "pkgpub.openBuildFolder",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "4_open@3"
+        },
+        {
+          "command": "pkgpub.openAurCheckout",
+          "when": "view == pkgpub.packages && viewItem =~ /^pkgpub\\.package/",
+          "group": "4_open@4"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "pkgpub.actions",
+          "when": "resourceFilename == PKGBUILD",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "pkgpub.openPkgbuild",
+          "when": "false"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "pkgpub",
+      "properties": {
+        "pkgpub.sshKey": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "markdownDescription": "Path to the private SSH key registered on your AUR account, like `~/.ssh/id_ed25519_aur`. Leave empty to use your normal SSH setup (agent and `~/.ssh/config`)."
+        },
+        "pkgpub.dataDirectory": {
+          "type": "string",
+          "default": "~/.pkgpub",
+          "scope": "machine",
+          "markdownDescription": "Where pkgpub keeps AUR checkouts (`aur/<pkgbase>`) and isolated build folders (`build/<pkgbase>`). Nothing is written to your project."
+        },
+        "pkgpub.exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/.aur/**",
+            "**/out/**",
+            "**/dist/**"
+          ],
+          "description": "Glob patterns of folders to ignore when looking for PKGBUILD files."
+        },
+        "pkgpub.makepkgArgs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "markdownDescription": "Extra arguments passed to `makepkg` when building, like `--nocheck`."
+        },
+        "pkgpub.updateChecksums": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Run `updpkgsums` before publishing so the checksums match the current sources. Sources marked `SKIP` stay that way."
+        },
+        "pkgpub.commitMessage": {
+          "type": "string",
+          "default": "Update to {version}",
+          "markdownDescription": "Default AUR commit message. `{version}` is replaced with the full package version and `{pkgbase}` with the package name."
+        },
+        "pkgpub.codeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show build and publish actions at the top of PKGBUILD files."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -w -p ./",
+    "lint": "eslint src",
+    "package": "vsce package --skip-license --allow-missing-repository",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@types/node": "^22.20.5",
+    "@types/vscode": "~1.95.0",
+    "@vscode/vsce": "^3.6.0",
+    "eslint": "^9.39.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.1"
+  }
+}

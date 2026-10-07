@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "pkgpub project config",
+  "type": "object",
+  "properties": {
+    "packages": {
+      "type": "object",
+      "description": "Package settings keyed by the PKGBUILD's path relative to the workspace folder, like \"packaging/aur/podium/PKGBUILD\".",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "versionSource": {
+            "type": "object",
+            "description": "Where the version comes from. Remembered from the last \"Set Version\" or \"Generate pkgver()\".",
+            "properties": {
+              "type": {
+                "enum": ["package.json", "deno.json", "ipm-package.yaml", "Cargo.toml", "git-tag", "git-revision", "command"]
+              },
+              "path": {
+                "type": "string",
+                "description": "Version file to read. Relative to the workspace folder when setting pkgver=, or to srcDir inside a generated pkgver()."
+              },
+              "command": {
+                "type": "string",
+                "description": "Shell command that prints the version, for the \"command\" type."
+              },
+              "appendRevision": {
+                "type": "boolean",
+                "description": "pkgver() only: append the git revision count and commit, like 1.2.0.r42.abc1234."
+              },
+              "srcDir": {
+                "type": "string",
+                "description": "pkgver() only: folder inside $srcdir the function runs in."
+              }
+            },
+            "required": ["type"]
+          },
+          "extraFiles": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Extra files next to the PKGBUILD to publish, like .gitignore or LICENSE. Local sources, install scripts and changelogs are always published."
+          },
+          "commitMessage": {
+            "type": "string",
+            "description": "AUR commit message for this package. {version} and {pkgbase} are replaced."
+          }
+        }
+      }
+    }
+  }
+}
